@@ -12,6 +12,7 @@
 
     <!-- Styles -->
     <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/the_digits.css" rel="stylesheet">
 
     <!-- Scripts -->
     <script>
