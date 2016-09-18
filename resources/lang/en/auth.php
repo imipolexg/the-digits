@@ -13,7 +13,10 @@ return [
     |
     */
 
-    'failed' => 'These credentials do not match our records.',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-
+    'failed'                   => 'These credentials do not match our records.',
+    'throttle'                 => 'Too many login attempts. Please try again in :seconds seconds.',
+    'social-conflict-'         => 'This email has already been registered manually. Please enter your password.',
+    'social-conflict-google'   => 'This email has already been connected via Google+.',
+    'social-conflict-github'   => 'This email has already been connected via Github.',
+    'social-conflict-facebook' => 'This email has already been connected via Facebook.',
 ];

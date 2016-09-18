@@ -56,8 +56,8 @@ return [
     */
 
     'from' => [
-        'address' => 'hello@example.com',
-        'name' => 'Example',
+        'address' => 'zsh@imipolexg.org',
+        'name' => 'Big Chief @ the_digits',
     ],
 
     /*

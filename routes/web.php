@@ -15,6 +15,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// The preset authentication routes
+// https://github.com/laravel/framework/blob/5.3/src/Illuminate/Routing/Router.php#L287
 Auth::routes();
+
+Route::get('auth/{provider}', 'Auth\SocialAuthController@redirectToProvider');
+Route::get('auth/{provider}/callback', 'Auth\SocialAuthController@handleProviderCallback');
 
 Route::get('/home', 'HomeController@index');
