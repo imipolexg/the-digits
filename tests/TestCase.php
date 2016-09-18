@@ -22,4 +22,14 @@ abstract class TestCase extends Illuminate\Foundation\Testing\TestCase
 
         return $app;
     }
+
+    /**
+     * Should we skip integration tests?
+     *
+     * @return bool
+     */
+    public function skipIntegrations()
+    {
+        return strtolower(env('RUN_INTEGRATION_TESTS', 'no')) !== 'yes';
+    }
 }
