@@ -146,7 +146,7 @@ class ContactRepository implements ContactRepositoryInterface
     public function getAll()
     {
         $models = ContactModel::where('user_id', $this->userId)
-            ->orderBy('email', 'desc')->get()->all();
+            ->orderBy('email', 'asc')->get()->all();
 
         return $this->parseModelArray($models);
     }
@@ -173,7 +173,7 @@ class ContactRepository implements ContactRepositoryInterface
             }
         );
 
-        $models = $search->orderBy('email', 'desc')->get()->all();
+        $models = $search->orderBy('email', 'asc')->get()->all();
 
         return $this->parseModelArray($models);
     }

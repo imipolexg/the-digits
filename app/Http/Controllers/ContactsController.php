@@ -33,7 +33,13 @@ class ContactsController extends Controller
         $this->repo->setUserId($request->user()->id);
 
         return $this->exceptionWrapper($request, null, function ($request, $email) {
-            $contacts = $this->repo->getAll();
+            if ($request->input('search')) {
+                $needle = $request->input('search');
+                $contacts = $this->repo->search($needle);
+            } else {
+                $contacts = $this->repo->getAll();
+            }
+
             return response()->json($contacts);
         });
     }
@@ -99,7 +105,6 @@ class ContactsController extends Controller
 
         return $contact;
     }
-
 
     /**
      * We wrap up the route methods here to simplify error handling
