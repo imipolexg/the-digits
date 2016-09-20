@@ -66,6 +66,13 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
+            'avatar' => $this->makeGravatarUrl($data['email']),
         ]);
+    }
+
+    protected function makeGravatarUrl($email)
+    {
+        $gravatarBase = 'https://www.gravatar.com/avatar/';
+        return $gravatarBase . md5(strtolower(trim($email)));
     }
 }

@@ -5766,4 +5766,27 @@ button.close {
   .hidden-print {
     display: none !important; } }
 
+body, html {
+  height: 100%;
+  overflow-y: hidden; }
+
+.main {
+  z-index: -1;
+  height: 95%;
+  padding-bottom: 10px; }
+
+.contact-panel {
+  z-index: -1;
+  height: 95%;
+  overflow-y: hidden; }
+
+.contacts-list {
+  z-index: -1;
+  height: 92%;
+  overflow-y: auto; }
+
+.panel-body {
+  z-index: -1;
+  height: 93%; }
+
 /*# sourceMappingURL=app.css.map */

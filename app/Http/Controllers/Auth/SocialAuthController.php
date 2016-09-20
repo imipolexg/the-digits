@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\User;
 use Auth;
-use Lang;
 use RandomLib\Factory as RandomFactory;
 use Socialite;
 
@@ -43,8 +42,8 @@ class SocialAuthController extends Controller
         if ($user !== null && $user->social_provider !== $provider) {
             // A user exists with this email via another social provider (or no social provider at all)
             $conflict = 'auth.social-conflict-' . $user->social_provider;
-            return redirect('/login')->withInput([ 'email' => $user->email])
-                ->withErrors([ 'email' => trans($conflict) ]);
+
+            return redirect('/login')->withInput([ 'email' => $user->email])->withErrors([ 'email' => trans($conflict) ]);
         }
 
         $user = $this->createOrUpdateSocialUser($provider, $user, $socialUser);
@@ -69,7 +68,6 @@ class SocialAuthController extends Controller
         if ($user === null) {
             $attrs['email'] = $socialUser->email;
             $attrs['password'] = $this->makeRandomPass();
-            $attrs['social_provider'] = $provider;
 
             return User::create($attrs);
         }

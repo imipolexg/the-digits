@@ -26,6 +26,7 @@ class ContactModel extends Model
         'custom3',
         'custom4',
         'custom5',
-        'external_id'
+        'external_id',
+        'user_id'
     ];
 }

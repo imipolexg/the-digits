@@ -64,7 +64,7 @@
                         <hr/>
                         <div class="form-group">
                             <div class="col-md-8 col-md-offset-4">
-                                Or connect with:&nbsp;
+                                Or Connect Via&nbsp;
                                 <a href="/auth/google">
                                     <img width=32 height=32 src="images/googleplus.svg" alt="Google+" />
                                 </a>

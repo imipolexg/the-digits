@@ -1,4 +1,4 @@
-<?php namespace App\ActiveCampaign;
+<?php namespace App;
 
 use App\ContactRepositoryInterface;
 use App\ContactRepoException;
@@ -22,7 +22,7 @@ use GuzzleHttp\Exception\RequestException;
  * calls in an async job queue when possible.
  *
  */
-class ActiveCampaignContactRepo implements ContactRepositoryInterface
+class ActiveCampaignContactRepo implements ExternalContactRepositoryInterface
 {
     protected static $API_PATH = '/admin/api.php';
 
@@ -39,9 +39,9 @@ class ActiveCampaignContactRepo implements ContactRepositoryInterface
         ]);
     }
 
-    public function get(int $contactId)
+    public function get(int $externalId)
     {
-        $params = [ 'id' => $contactId ];
+        $params = [ 'id' => $externalId ];
         $resp = $this->makeRequest('contact_view', $params);
 
         return $this->parseContactArray($resp);
@@ -84,9 +84,9 @@ class ActiveCampaignContactRepo implements ContactRepositoryInterface
         return $contact;
     }
 
-    public function delete(int $contactId)
+    public function delete(int $externalId)
     {
-        $params = [ 'id' => $contactId ];
+        $params = [ 'id' => $externalId ];
         $this->makeRequest('contact_delete', $params);
     }
 

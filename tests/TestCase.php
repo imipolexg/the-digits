@@ -1,5 +1,7 @@
 <?php
 
+use App\Contact;
+
 abstract class TestCase extends Illuminate\Foundation\Testing\TestCase
 {
     /**
@@ -8,6 +10,15 @@ abstract class TestCase extends Illuminate\Foundation\Testing\TestCase
      * @var string
      */
     protected $baseUrl = 'http://localhost';
+
+    protected $faker;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->faker = \Faker\Factory::create();
+    }
 
     /**
      * Creates the application.
@@ -23,6 +34,7 @@ abstract class TestCase extends Illuminate\Foundation\Testing\TestCase
         return $app;
     }
 
+
     /**
      * Should we skip integration tests?
      *
@@ -31,5 +43,22 @@ abstract class TestCase extends Illuminate\Foundation\Testing\TestCase
     public function skipIntegrations()
     {
         return strtolower(env('RUN_INTEGRATION_TESTS', 'no')) !== 'yes';
+    }
+
+    /**
+     * Makes a contact with random data.
+     *
+     * @return Contact
+     */
+    public function makeRandomContact()
+    {
+        $contact = new Contact();
+
+        $contact->setEmail($this->faker->unique()->email);
+        $contact->setFirstName($this->faker->firstName);
+        $contact->setLastName($this->faker->lastName);
+        $contact->setPhone($this->faker->phoneNumber);
+
+        return $contact;
     }
 }

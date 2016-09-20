@@ -23,3 +23,11 @@ Route::get('auth/{provider}', 'Auth\SocialAuthController@redirectToProvider');
 Route::get('auth/{provider}/callback', 'Auth\SocialAuthController@handleProviderCallback');
 
 Route::get('/home', 'HomeController@index');
+
+/* Contact AJAX routes */
+Route::get('/contacts', 'ContactsController@index');
+Route::post('/contacts', 'ContactsController@create');
+Route::get('/contacts/{email}', 'ContactsController@find');
+Route::patch('/contacts/{email}', 'ContactsController@update');
+Route::delete('/contacts/{email}', 'ContactsController@delete');
+

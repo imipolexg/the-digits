@@ -1,13 +1,13 @@
 <?php
 
-use App\ActiveCampaign\ActiveCampaignContactRepo;
+use App\ActiveCampaignContactRepo;
 use App\Contact;
 
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
-class ExampleTest extends TestCase
+class ActiveCampaignContactTest extends TestCase
 {
     /**
      * Test contact CRUD
@@ -58,22 +58,5 @@ class ExampleTest extends TestCase
         $this->assertEquals($synced2, $newRando);
 
         $repo->delete($created->getExternalId());
-    }
-
-    /**
-     * Makes a contact with random data.
-     *
-     * @return Contact
-     */
-    public function makeRandomContact()
-    {
-        $contact = new Contact();
-
-        $contact->setEmail(uniqid() . '@' . uniqid() . '.tld');
-        $contact->setFirstName(uniqid());
-        $contact->setLastName(uniqid());
-        $contact->setPhone('555-555-5555');
-
-        return $contact;
     }
 }

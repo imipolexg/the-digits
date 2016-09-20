@@ -28,8 +28,10 @@ class CreateContactsTable extends Migration
             $table->integer('external_id')->nullable();
             $table->timestamps();
 
-            $table->unique('email');
             $table->foreign('user_id')->references('id')->on('users');
+            $table->index(['id', 'user_id']);
+            $table->index(['email', 'user_id']);
+            $table->unique(['email', 'user_id']);
         });
     }
 

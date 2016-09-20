@@ -3,7 +3,8 @@
 use App\Contact;
 
 /**
- * A basic repository interface for interacting with contact collections
+ * A basic repository interface for interacting with contact 'external'
+ * collections that sync with a native repository.
  *
  * Does not support any predicate expressions for restricting the contacts
  * returned by getAll().
@@ -16,17 +17,17 @@ use App\Contact;
  * TODO: Pagination?
  */
 
-interface ContactRepositoryInterface
+interface ExternalContactRepositoryInterface
 {
 
     /**
      * Get a contact object by its id
      *
-     * @param int $contactId
+     * @param int $externalId
      *
      * @return Contact|null
      */
-    public function get(int $contactId);
+    public function get(int $externalId);
 
     /**
      * Get a contact object by its email address
@@ -43,13 +44,6 @@ interface ContactRepositoryInterface
      * @return array
      */
     public function getAll();
-
-    /**
-     * Search the repository
-     *
-     * @return array
-     */
-    public function search(string $needle);
 
     /**
      * Idempotently create or update a contact
@@ -81,25 +75,9 @@ interface ContactRepositoryInterface
     /**
      * Delete a contact
      *
-     * @param int $contactId
+     * @param int $externalId
      *
      * @return void
      */
-    public function delete(int $contactId);
-
-    /**
-     * Set the User Id to restrict repository requests by
-     *
-     * @param int $userId
-     *
-     * @return void
-     */
-    public function setUserId(int $userId);
-
-    /**
-     * Get the User Id to restrict repository requests by
-     *
-     * @return int
-     */
-    public function getUserId();
+    public function delete(int $externalId);
 }

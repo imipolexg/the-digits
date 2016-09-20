@@ -17,4 +17,5 @@ elixir(mix => {
     mix.sass('app.scss')
        .webpack('app.js');
     mix.copy('resources/assets/images/*.svg', 'public/images/');
+    mix.copy('node_modules/bootstrap-sass/assets/fonts/bootstrap/glyph*', 'public/fonts/bootstrap');
 });
