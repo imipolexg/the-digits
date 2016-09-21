@@ -1,0 +1,34 @@
+
+// Fonts
+@import url(https://fonts.googleapis.com/css?family=Oxygen:300,400,600);
+
+// Variables
+@import "variables";
+
+// Bootstrap
+@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+
+body {
+   padding-top: 70px;
+}
+
+a.contact-link { 
+   color: black;
+}
+
+a:hover.contact-link { 
+   color: black;
+}
+
+.clear-button {
+    cursor: pointer;
+}
+
+.hiddenbutton {
+    display: none;
+}
+
+.panel-body {
+    z-index: -1;
+    height: 93%;
+}

@@ -14,7 +14,7 @@ require('laravel-elixir-vue');
  */
 
 elixir(mix => {
-    mix.sass('app.scss').webpack('app.js');
+    mix.sass('app.scss').sass('login.scss').webpack('app.js');
     mix.copy('resources/assets/js/the-digits.js', 'public/js/the-digits.js');
     mix.copy('resources/assets/images/*.svg', 'public/images/');
     mix.copy('node_modules/bootstrap-sass/assets/fonts/bootstrap/glyph*', 'public/fonts/bootstrap');
