@@ -3,19 +3,25 @@
 namespace App\Listeners;
 
 use App\Events\ContactDeleteEvent;
-use Illuminate\Queue\InteractsWithQueue;
+use App\ExternalContactRepositoryInterface;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 
-class DeleteExternalContact
+class DeleteExternalContact implements ShouldQueue
 {
+
+    public $syncRepo;
+    public $doSync;
+
     /**
      * Create the event listener.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(ExternalContactRepositoryInterface $syncRepo)
     {
-        //
+        $this->syncRepo = $syncRepo;
+        $this->doSync = config('services.do_sync');
     }
 
     /**
@@ -26,6 +32,11 @@ class DeleteExternalContact
      */
     public function handle(ContactDeleteEvent $event)
     {
-        //
+        if ($this->doSync) {
+            $externalId = $event->contact->getExternalId();
+            if ($externalId) {
+                $this->syncRepo->delete($externalId);
+            }
+        }
     }
 }

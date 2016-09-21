@@ -2,10 +2,10 @@
 
 namespace App;
 
+use DB;
 use App\Contact;
 use App\ContactModel;
 use App\ContactRepositoryInterface;
-use DB;
 use Illuminate\Database\QueryException;
 
 class ContactRepository implements ContactRepositoryInterface
@@ -197,10 +197,6 @@ class ContactRepository implements ContactRepositoryInterface
      */
     public function sync(Contact $contact)
     {
-        if ($contact->getId() !== null) {
-            return $this->update($contact);
-        }
-
         $existing = $this->getByEmail($contact->getEmail());
         if ($existing !== null) {
             $contact->setId($existing->getId());

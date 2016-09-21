@@ -181,7 +181,8 @@ return [
         Laravel\Socialite\SocialiteServiceProvider::class,
 
         App\Providers\ContactServiceProvider::class,
-    ],
+        App\Providers\ExternalContactServiceProvider::class,
+   ],
 
     /*
     |--------------------------------------------------------------------------

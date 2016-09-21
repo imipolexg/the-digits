@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Contact;
 use App\ContactRepositoryInterface;
 use App\ContactRepoException;
+use App\Events\ContactChangeEvent;
+use App\Events\ContactDeleteEvent;
 use Auth;
 
 class ContactsController extends Controller
@@ -32,16 +34,14 @@ class ContactsController extends Controller
     {
         $this->repo->setUserId($request->user()->id);
 
-        return $this->exceptionWrapper($request, null, function ($request, $email) {
-            if ($request->input('search')) {
-                $needle = $request->input('search');
-                $contacts = $this->repo->search($needle);
-            } else {
-                $contacts = $this->repo->getAll();
-            }
+        if ($request->input('search')) {
+            $needle = $request->input('search');
+            $contacts = $this->repo->search($needle);
+        } else {
+            $contacts = $this->repo->getAll();
+        }
 
-            return response()->json($contacts);
-        });
+        return response()->json($contacts);
     }
 
     public function create(Request $request)
@@ -49,20 +49,20 @@ class ContactsController extends Controller
         $this->repo->setUserId($request->user()->id);
         $this->validate($request, $this->validations);
 
-        return $this->exceptionWrapper($request, null, function ($request, $email) {
-            $contact = $this->repo->create($this->makeContactFromArray($request->all()));
-            return response()->json($contact);
-        });
+        $contact = $this->repo->create($this->makeContactFromArray($request->all()));
+
+        event(new ContactChangeEvent($contact, $this->repo->getUserId()));
+
+        return response()->json($contact);
     }
 
     public function find(Request $request, $email)
     {
         $this->repo->setUserId($request->user()->id);
 
-        return $this->exceptionWrapper($request, $email, function ($request, $email) {
-            $contact = $this->repo->getByEmail($email);
-            return response()->json($contact);
-        });
+        $contact = $this->repo->getByEmail($email);
+
+        return response()->json($contact);
     }
 
     public function update(Request $request, $email)
@@ -70,24 +70,26 @@ class ContactsController extends Controller
         $this->repo->setUserId($request->user()->id);
         $this->validate($request, $this->validations);
 
-        return $this->exceptionWrapper($request, $email, function ($request, $email) {
-            $contact = $this->makeContactFromArray($request->all());
-            $contact = $this->repo->sync($contact);
+        $contact = $this->makeContactFromArray($request->all());
 
-            return response()->json($contact);
-        });
+        // We use sync because it will not overwrite an existing externalId
+        $contact = $this->repo->sync($contact);
+
+        event(new ContactChangeEvent($contact, $this->repo->getUserId()));
+
+        return response()->json($contact);
     }
 
     public function delete(Request $request, $email)
     {
         $this->repo->setUserId($request->user()->id);
 
-        return $this->exceptionWrapper($request, $email, function ($request, $email) {
-            $contact = $this->repo->getByEmail($email);
-            $this->repo->delete($contact->getId());
+        $contact = $this->repo->getByEmail($email);
+        $this->repo->delete($contact->getId());
 
-            return response('No Content', 204);
-        });
+        event(new ContactDeleteEvent($contact));
+
+        return response('No Content', 204);
     }
 
     protected function makeContactFromArray(array $contactArray)
@@ -104,25 +106,5 @@ class ContactsController extends Controller
         }
 
         return $contact;
-    }
-
-    /**
-     * We wrap up the route methods here to simplify error handling
-     */
-    protected function exceptionWrapper($request, $email, $callback)
-    {
-        try {
-            return $callback($request, $email);
-        } catch (ContactRepoException $ex) {
-            switch ($ex->getCode()) {
-            case ContactRepoException::DUPLICATE_EMAIL:
-                return response()->json(['email' => $ex->getMessage()], 400);
-            case ContactRepoException::CONTACT_NOT_FOUND:
-            case ContactRepoException::CONTACT_NOT_FOUND_EMAIL:
-                return response($ex->getMessage(), 404);
-            default:
-                return response($ex->getMessage(), 500);
-            }
-        }
     }
 }

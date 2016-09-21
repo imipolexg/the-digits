@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use App\ContactRepoException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
@@ -44,6 +45,18 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if ($exception instanceof ContactRepoException) {
+            switch ($ex->getCode()) {
+                case ContactRepoException::DUPLICATE_EMAIL:
+                    return response()->json(['email' => $ex->getMessage()], 400);
+                case ContactRepoException::CONTACT_NOT_FOUND:
+                case ContactRepoException::CONTACT_NOT_FOUND_EMAIL:
+                    return response($ex->getMessage(), 404);
+                default:
+                    return response($ex->getMessage(), 500);
+            }
+        }
+
         return parent::render($request, $exception);
     }
 

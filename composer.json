@@ -10,7 +10,8 @@
         "guzzlehttp/guzzle": "^6.2",
         "laravel/socialite": "^2.0",
         "ircmaxell/random-lib": "^1.2",
-        "fzaninotto/faker": "^1.6"
+        "fzaninotto/faker": "^1.6",
+        "predis/predis": "^1.1"
     },
     "require-dev": {
         "mockery/mockery": "0.9.*",

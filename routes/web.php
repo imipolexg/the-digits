@@ -30,4 +30,3 @@ Route::post('/contacts', 'ContactsController@create');
 Route::get('/contacts/{email}', 'ContactsController@find');
 Route::patch('/contacts/{email}', 'ContactsController@update');
 Route::delete('/contacts/{email}', 'ContactsController@delete');
-
