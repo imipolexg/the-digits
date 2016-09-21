@@ -46,14 +46,14 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         if ($exception instanceof ContactRepoException) {
-            switch ($ex->getCode()) {
+            switch ($exception->getCode()) {
                 case ContactRepoException::DUPLICATE_EMAIL:
-                    return response()->json(['email' => $ex->getMessage()], 400);
+                    return response()->json(['email' => $exception->getMessage()], 422);
                 case ContactRepoException::CONTACT_NOT_FOUND:
                 case ContactRepoException::CONTACT_NOT_FOUND_EMAIL:
-                    return response($ex->getMessage(), 404);
+                    return response($exception->getMessage(), 404);
                 default:
-                    return response($ex->getMessage(), 500);
+                    return response($exception->getMessage(), 500);
             }
         }
 

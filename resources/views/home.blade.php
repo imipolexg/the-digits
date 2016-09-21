@@ -17,6 +17,11 @@
       </div>
       <div class="modal-body">
         <div class="row">
+            <div class="col-xs-8 col-xs-offset-2">
+            <div id="edit-modal-error" class="hidden" style="margin: 5px; padding: 5px; background-color: #F5A2A2; color: #C61414">Fly me to the danger zone</div>
+            </div>
+        </div>
+        <div class="row">
             <div class="form-horizontal">
                 <div class="form-group">
                     <label for="edit-contact-email" class="col-xs-2 col-xs-offset-1  control-label">E-Mail</label>
@@ -42,30 +47,18 @@
                         <input id="edit-contact-phone" name="edit-contact-phone" class="form-control" type="text" />
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="edit-contact-custom1" class="col-xs-2 col-xs-offset-1 control-label">Custom 1</label>
-                    <div class="col-xs-7 col-xs-offset-1">
-                        <input id="edit-contact-custom1" name="edit-contact-custom1" class="form-control" type="text" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="edit-contact-custom2" class="col-xs-2 col-xs-offset-1 control-label">Custom 2</label>
-                    <div class="col-xs-7 col-xs-offset-1">
-                        <input id="edit-contact-custom2" name="edit-contact-custom2" class="form-control" type="text" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="edit-contact-custom3" class="col-xs-2 col-xs-offset-1 control-label">Custom 3</label>
-                    <div class="col-xs-7 col-xs-offset-1">
-                        <input id="edit-contact-custom3" name="edit-contact-custom3" class="form-control" type="text" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="edit-contact-custom1" class="col-xs-2 col-xs-offset-1 control-label">Custom 1</label>
-                    <div class="col-xs-7 col-xs-offset-1">
-                        <input id="edit-contact-custom1" name="edit-contact-custom1" class="form-control" type="text" />
-                    </div>
-                </div>
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="control-label col-xs-10 col-xs-offset-1">
+                Custom Fields
+                <span class="pull-right"><button id="add-custom-field" type="button" class="btn btn-default btn-sm glyphicon glyphicon-plus"></button></span>
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div id="custom-fields-elem" class="form-horizontal">
             </div>
         </div>
       </div>
@@ -102,12 +95,15 @@ $(document).ready(function () {
     });
 
     let contactListElem = $('#contacts-list-group');
-    let searchGroup = $("#search-group");
-    let searchInput = $("#search");
-    let searchButton = $("#search-button");
-    let searchIcon = $("#search-icon");
-    let editModal = $("#edit-modal");
-    let deleteModal = $("#delete-modal");
+    let searchGroup = $('#search-group');
+    let searchInput = $('#search');
+    let searchButton = $('#search-button');
+    let searchIcon = $('#search-icon');
+    let editModal = $('#edit-modal');
+    let editModalError = $('#edit-modal-error');
+    let deleteModal = $('#delete-modal');
+    let customFieldsElem = $('#custom-fields-elem');
+    let addCustomFieldButton = $('#add-custom-field');
 
     let contactList, cachedContactList, modalContact, modalContactIndex,
         modalContactElem, deleteModalContact, deleteModalIndex, deleteModalElem;
@@ -172,7 +168,7 @@ $(document).ready(function () {
         elem.empty();
 //        let removeSpan = $('<span>', { style: 'cursor: pointer; color: white', class: 'glyphicon glyphicon-remove' });
         let removeSpan = $('<span>', { class: 'pull-right' });
-        let removeButton = $('<button>', { class: 'btn btn-default glyphicon glyphicon-remove' });
+        let removeButton = $('<button>', { class: 'btn btn-default btn-sm glyphicon glyphicon-remove' });
         removeButton.click(function (evt) {
             showDeleteModal(index, contact, elem);
 //            deleteContact(index, contact, elem);
@@ -312,8 +308,18 @@ $(document).ready(function () {
         }
     });
 
+    let handleEditError = function (errorObj) {
+        errMsg = errorObj.responseJSON.email;
+        editModalError.html(errMsg);
+
+        if (editModalError.hasClass('hidden')) {
+            editModalError.removeClass('hidden');
+        }
+    };
+
     let updateContact = function(contact) {
         return $.ajax('/contacts/' + encodeURIComponent(contact.email), {
+            statusCode: { 422: handleEditError },
             method: 'PATCH',
             data: JSON.stringify(contact),
             processData: false,
@@ -323,6 +329,7 @@ $(document).ready(function () {
 
     let createContact = function (contact) {
         return $.ajax('/contacts', {
+            statusCode: { 422: handleEditError },
             method: 'POST',
             data: JSON.stringify(contact),
             processData: false,
@@ -341,28 +348,34 @@ $(document).ready(function () {
     };
 
     editModal.on('show.bs.modal', function () {
+        customFieldsElem.empty();
+        addCustomFieldButton.removeClass('disabled');
+
         if (modalContact) {
             $('#edit-modal-title').html('Edit ' + modalContact.email);
             $('#edit-contact-email').val(modalContact.email);
             $('#edit-contact-first-name').val(modalContact.firstName);
             $('#edit-contact-last-name').val(modalContact.lastName);
             $('#edit-contact-phone').val(modalContact.phone);
-            $('#edit-contact-custom1').val(modalContact.custom1);
-            $('#edit-contact-custom2').val(modalContact.custom2);
-            $('#edit-contact-custom3').val(modalContact.custom3);
-            $('#edit-contact-custom4').val(modalContact.custom4);
-            $('#edit-contact-custom5').val(modalContact.custom5);
+
+            for (let i = 1, j = 1; i <= 5; i++) {
+                let customIndex = 'custom' + i;
+                if (modalContact[customIndex] !== null) {
+                    addCustomField(j);
+                    $('#edit-contact-custom-' + j).val(modalContact[customIndex]);
+                    j++;
+                }
+            }
+
+            if ($('.custom-field-group').length === 5) {
+                addCustomFieldButton.addClass('disabled');
+            }
         } else {
             $('#edit-modal-title').html('Add Contact');
             $('#edit-contact-email').val(null);
             $('#edit-contact-first-name').val(null);
             $('#edit-contact-last-name').val(null);
             $('#edit-contact-phone').val(null);
-            $('#edit-contact-custom1').val(null);
-            $('#edit-contact-custom2').val(null);
-            $('#edit-contact-custom3').val(null);
-            $('#edit-contact-custom4').val(null);
-            $('#edit-contact-custom5').val(null);
         }
     });
 
@@ -378,11 +391,11 @@ $(document).ready(function () {
         contact.firstName= $('#edit-contact-first-name').val();
         contact.lastName= $('#edit-contact-last-name').val();
         contact.phone = $('#edit-contact-phone').val();
-        contact.custom1 = $('#edit-contact-custom1').val();
-        contact.custom2 = $('#edit-contact-custom2').val();
-        contact.custom3 = $('#edit-contact-custom3').val();
-        contact.custom4 = $('#edit-contact-custom4').val();
-        contact.custom5 = $('#edit-contact-custom5').val();
+        contact.custom1 = $('#edit-contact-custom-1').val();
+        contact.custom2 = $('#edit-contact-custom-2').val();
+        contact.custom3 = $('#edit-contact-custom-3').val();
+        contact.custom4 = $('#edit-contact-custom-4').val();
+        contact.custom5 = $('#edit-contact-custom-5').val();
 
         return contact;
     };
@@ -392,6 +405,70 @@ $(document).ready(function () {
         constructContactsList(contactList);
         if (cachedContactList) { cachedContactList.sort(contactCompare); }
     };
+
+    let hideEditModal = function () {
+        if (!editModalError.hasClass('hidden')) {
+            editModalError.addClass('hidden');
+        }
+        editModal.modal('hide');
+    };
+
+    let removeCustomField = function (index, elem) {
+        // Move ids up
+        let nextGroup = elem.next('.custom-field-group');
+        console.log('nextGroup', nextGroup);
+        while (nextGroup.attr('id') !== undefined) {
+            let inputElem = nextGroup.find('input');
+            let inputId = inputElem.attr('id');
+            parts = inputId.split('-');
+            idPart = parseInt(parts[3]) - 1;
+            parts[3] = idPart.toString()
+
+            inputElem.attr('id', parts.join('-'));
+            nextGroup = nextGroup.next('.custom-field-group');
+        }
+
+        elem.remove();
+        if ($('.custom-field-group').length < 5) {
+            addCustomFieldButton.removeClass('disabled');
+        }
+    };
+
+    let addCustomField = function (index) {
+        let inputId = 'edit-contact-custom-' + index;
+        let outerDiv = $('<div>', { id: 'outercustom-' + index, class: 'form-group custom-field-group' });
+        let inputGroup = $('<div>', { class: 'input-group col-xs-10 col-xs-offset-1' });
+        let customInput = $('<input>', { id: inputId, name: inputId, class: 'form-control', type: 'text' });
+        let btnSpan = $('<span>', { class: 'input-group-btn' });
+        let removeButton = $('<button>', { class: 'btn btn-default glyphicon glyphicon-minus' });
+
+        removeButton.click(function () {
+            removeCustomField(index, outerDiv);
+        });
+
+        btnSpan.append(removeButton);
+        inputGroup.append(customInput);
+        inputGroup.append(btnSpan);
+        outerDiv.append(inputGroup);
+
+        $('#custom-fields-elem').append(outerDiv);
+    };
+
+    addCustomFieldButton.click(function () {
+        if (addCustomFieldButton.hasClass('disabled')) {
+            console.log('skip');
+            return false;
+        }
+
+        let customFieldElems = $('.custom-field-group');
+        let newIndex = customFieldElems.length + 1;
+
+        addCustomField(newIndex);
+
+        if (newIndex === 5) {
+            addCustomFieldButton.addClass('disabled');
+        }
+    });
 
     $('#edit-save').click(function () {
         if (modalContact) {
@@ -404,9 +481,9 @@ $(document).ready(function () {
 
             // save it on the backend
             updateContact(updatedContact).done(function (contact) {
-                $('#edit-modal').modal('hide');
-                modalContact = undefined;
+                hideEditModal();
 
+                modalContact = undefined;
                 contactList[modalContactIndex] = contact;
 
                 // If we have a cached contact list for quick rendering, update the contact in it
@@ -422,9 +499,12 @@ $(document).ready(function () {
                 resortList();
             });
         } else {
+            // We're adding a new contact
             newContact = grabModalValues();
             createContact(newContact).done(function (contact) {
-                $('#edit-modal').modal('hide');
+                console.log('done');
+                hideEditModal();
+
                 modalContact = undefined;
 
                 contactList.push(contact);
