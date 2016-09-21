@@ -153,7 +153,7 @@ class ActiveCampaignContactRepo implements ExternalContactRepositoryInterface
             'email' => $contact->getEmail(),
             'first_name' => $contact->getFirstName(),
             'last_name' => $contact->getLastName(),
-            'phone' => $contact->getPhone()
+            'phone' => $contact->getPhone(),
         ];
 
         if ($contact->getExternalId() !== null) {
