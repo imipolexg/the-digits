@@ -63,6 +63,7 @@ class SocialAuthController extends Controller
             'nickname'        => $socialUser->nickname,
             'refresh_token'   => $socialUser->refreshToken,
             'token'           => $socialUser->token,
+            'social_provider' => $provider,
         ];
 
         if ($user === null) {
