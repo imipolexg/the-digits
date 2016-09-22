@@ -66,13 +66,13 @@
                             <div class="col-md-8 col-md-offset-4">
                                 Or Connect Via&nbsp;
                                 <a href="/auth/google">
-                                    <img width=32 height=32 src="images/googleplus.svg" alt="Google+" />
+                                    <img width=32 height=32 src="images/gplus.svg" alt="Google+" />
                                 </a>
                                 <a href="/auth/github">
                                     <img width=32 height=32 src="images/github.svg" alt="Github" />
                                 </a>
                                 <a href="/auth/facebook">
-                                    <img width=32 height=32 src="images/facebook.svg" alt="Facebook" />
+                                    <img width=32 height=32 src="images/fb.svg" alt="Facebook" />
                                 </a>
                             </div>
                         </div>

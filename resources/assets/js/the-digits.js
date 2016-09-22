@@ -3,27 +3,27 @@ $(document).ready(function () {
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
     });
 
-    let contactListElem = $('#contacts-list-group');
-    let searchGroup = $('#search-group');
-    let searchInput = $('#search');
-    let searchButton = $('#search-button');
-    let searchIcon = $('#search-icon');
-    let editModal = $('#edit-modal');
-    let editModalError = $('#edit-modal-error');
-    let deleteModal = $('#delete-modal');
-    let customFieldsElem = $('#custom-fields-elem');
-    let addCustomFieldButton = $('#add-custom-field');
+    var contactListElem = $('#contacts-list-group');
+    var searchGroup = $('#search-group');
+    var searchInput = $('#search');
+    var searchButton = $('#search-button');
+    var searchIcon = $('#search-icon');
+    var editModal = $('#edit-modal');
+    var editModalError = $('#edit-modal-error');
+    var deleteModal = $('#delete-modal');
+    var customFieldsElem = $('#custom-fields-elem');
+    var addCustomFieldButton = $('#add-custom-field');
 
-    let contactList, cachedContactList, modalContact, modalContactIndex,
+    var contactList, cachedContactList, modalContact, modalContactIndex,
         modalContactElem, deleteModalContact, deleteModalIndex, deleteModalElem;
 
     // The contacts are sorted by email so we can lookup a contact in our
     // object list quickly this way
-    let binarySearchContacts = function (contacts, email) {
-        let max = contacts.length - 1, min = 0;
+    var binarySearchContacts = function (contacts, email) {
+        var max = contacts.length - 1, min = 0;
 
         while (max >= min) {
-            let mid = min + Math.floor((max-min)/2);
+            var mid = min + Math.floor((max-min)/2);
 
             console.log(mid, contacts[mid].email);
 
@@ -39,7 +39,7 @@ $(document).ready(function () {
         return -1;
     };
 
-    let deleteContact = function (index, contact, elem) {
+    var deleteContact = function (index, contact, elem) {
         $.ajax('/contacts/' + encodeURIComponent(contact.email), { method: 'DELETE' }).done(function () {
             elem.remove();
             contactList[index].deleted = true;
@@ -59,7 +59,7 @@ $(document).ready(function () {
         });
     }
 
-    let showDeleteModal = function (index, contact, elem) {
+    var showDeleteModal = function (index, contact, elem) {
         deleteModalIndex = index; deleteModalContact = contact; deleteModalElem = elem;
         deleteModal.modal('show');
     };
@@ -73,11 +73,11 @@ $(document).ready(function () {
         deleteModal.modal('hide');
     });
 
-    let renderContact = function (index, contact, elem) {
+    var renderContact = function (index, contact, elem) {
         elem.empty();
-//        let removeSpan = $('<span>', { style: 'cursor: pointer; color: white', class: 'glyphicon glyphicon-remove' });
-        let removeSpan = $('<span>', { class: 'pull-right' });
-        let removeButton = $('<button>', { class: 'btn btn-default btn-sm glyphicon glyphicon-remove' });
+//        var removeSpan = $('<span>', { style: 'cursor: pointer; color: white', class: 'glyphicon glyphicon-remove' });
+        var removeSpan = $('<span>', { class: 'pull-right' });
+        var removeButton = $('<button>', { class: 'btn btn-default btn-sm glyphicon glyphicon-remove' });
         removeButton.click(function (evt) {
             showDeleteModal(index, contact, elem);
 //            deleteContact(index, contact, elem);
@@ -85,8 +85,8 @@ $(document).ready(function () {
         removeSpan.append(removeButton);
         elem.append(removeSpan);
 
-        let wrapperA = $('<a>', { href: '#', class: 'contact-link', id: 'contact-link-' + index});
-        let heading = $('<h4>', { class: 'list-group-item-heading' });
+        var wrapperA = $('<a>', { href: '#', class: 'contact-link', id: 'contact-link-' + index});
+        var heading = $('<h4>', { class: 'list-group-item-heading' });
         heading.html(contact.email);
         wrapperA.append(heading);
         wrapperA.click(function (evt) {
@@ -97,8 +97,8 @@ $(document).ready(function () {
             editModal.modal('show');
         });
 
-        let itemText = $('<p>', { class: 'list-group-item-text' });
-        let itemTextHtml = '';
+        var itemText = $('<p>', { class: 'list-group-item-text' });
+        var itemTextHtml = '';
         if (contact.firstName && contact.lastName) {
             itemTextHtml = contact.lastName + ', ' + contact.firstName + '<br/>';
         } else if (contact.firstName) {
@@ -118,17 +118,17 @@ $(document).ready(function () {
         elem.append(wrapperA);
     };
 
-    let addContactToList = function(index, contact) {
-        let li = $('<li>', { class: "contact-item list-group-item", id: 'contact-' + index });
+    var addContactToList = function(index, contact) {
+        var li = $('<li>', { class: "contact-item list-group-item", id: 'contact-' + index });
         renderContact(index, contact, li);
         contactListElem.append(li);
     };
 
-    let constructContactsList = function (contacts) {
+    var constructContactsList = function (contacts) {
         contactListElem.empty();
 
-        let didAddAContact = false;
-        for (let i = 0; i < contacts.length; i++) {
+        var didAddAContact = false;
+        for (var i = 0; i < contacts.length; i++) {
             if (contacts[i].deleted) {
                 continue;
             }
@@ -142,14 +142,14 @@ $(document).ready(function () {
         }
     };
 
-    let loadContacts = function () {
+    var loadContacts = function () {
         $.ajax('/contacts').done(function (contacts) {
             contactList = contacts;
             constructContactsList(contactList);
         });
     };
 
-    let doSearch = function (needle) {
+    var doSearch = function (needle) {
         contactListElem.empty();
         contactListElem.append("Searching for '" + needle + "'");
 
@@ -163,7 +163,7 @@ $(document).ready(function () {
         });
     };
 
-    let clearSearch = function (needle) {
+    var clearSearch = function (needle) {
         if (cachedContactList) {
             contactList = cachedContactList;
             cachedContactList = undefined;
@@ -174,7 +174,7 @@ $(document).ready(function () {
     // Clear search if backspace erases search completely
     searchInput.keydown(function (evt) {
         if (evt.which === 8 || evt.which === 46) {
-            let needle = searchInput.val().trim();
+            var needle = searchInput.val().trim();
 
             if ((!needle || needle === '' || needle.length == 1) && searchIcon.hasClass('glyphicon-remove')) {
                 searchButton.click();
@@ -189,7 +189,7 @@ $(document).ready(function () {
             return;
         }
 
-        let needle = searchInput.val().trim();
+        var needle = searchInput.val().trim();
         if (!needle) { needle = ''; }
 
         if (searchIcon.hasClass('glyphicon-search') || needle === '') {
@@ -203,7 +203,7 @@ $(document).ready(function () {
     });
 
     searchButton.click(function () {
-        let needle = searchInput.val().trim();
+        var needle = searchInput.val().trim();
         if (!needle) { needle = ''; }
 
         if (searchIcon.hasClass('glyphicon-search') && needle !== '') {
@@ -217,7 +217,7 @@ $(document).ready(function () {
         }
     });
 
-    let handleEditError = function (errorObj) {
+    var handleEditError = function (errorObj) {
         errMsg = errorObj.responseJSON.email;
         editModalError.html(errMsg);
 
@@ -226,7 +226,7 @@ $(document).ready(function () {
         }
     };
 
-    let updateContact = function(contact) {
+    var updateContact = function(contact) {
         return $.ajax('/contacts/' + encodeURIComponent(contact.email), {
             statusCode: { 422: handleEditError },
             method: 'PATCH',
@@ -236,7 +236,7 @@ $(document).ready(function () {
         });
     };
 
-    let createContact = function (contact) {
+    var createContact = function (contact) {
         return $.ajax('/contacts', {
             statusCode: { 422: handleEditError },
             method: 'POST',
@@ -246,7 +246,7 @@ $(document).ready(function () {
         });
     };
 
-    let contactCompare = function (a, b) {
+    var contactCompare = function (a, b) {
         if (a.email > b.email) {
             return 1;
         } else if (a.email < b.email) {
@@ -267,8 +267,8 @@ $(document).ready(function () {
             $('#edit-contact-last-name').val(modalContact.lastName);
             $('#edit-contact-phone').val(modalContact.phone);
 
-            for (let i = 1, j = 1; i <= 5; i++) {
-                let customIndex = 'custom' + i;
+            for (var i = 1, j = 1; i <= 5; i++) {
+                var customIndex = 'custom' + i;
                 if (modalContact[customIndex] !== null) {
                     addCustomField(j);
                     $('#edit-contact-custom-' + j).val(modalContact[customIndex]);
@@ -294,7 +294,7 @@ $(document).ready(function () {
         }
     });
 
-    let grabModalValues = function () {
+    var grabModalValues = function () {
         contact = {}
         contact.email = $('#edit-contact-email').val();
         contact.firstName= $('#edit-contact-first-name').val();
@@ -309,26 +309,26 @@ $(document).ready(function () {
         return contact;
     };
 
-    let resortList = function () {
+    var resortList = function () {
         contactList.sort(contactCompare);
         constructContactsList(contactList);
         if (cachedContactList) { cachedContactList.sort(contactCompare); }
     };
 
-    let hideEditModal = function () {
+    var hideEditModal = function () {
         if (!editModalError.hasClass('hidden')) {
             editModalError.addClass('hidden');
         }
         editModal.modal('hide');
     };
 
-    let removeCustomField = function (index, elem) {
+    var removeCustomField = function (index, elem) {
         // Move ids up
-        let nextGroup = elem.next('.custom-field-group');
+        var nextGroup = elem.next('.custom-field-group');
         console.log('nextGroup', nextGroup);
         while (nextGroup.attr('id') !== undefined) {
-            let inputElem = nextGroup.find('input');
-            let inputId = inputElem.attr('id');
+            var inputElem = nextGroup.find('input');
+            var inputId = inputElem.attr('id');
             parts = inputId.split('-');
             idPart = parseInt(parts[3]) - 1;
             parts[3] = idPart.toString()
@@ -343,13 +343,13 @@ $(document).ready(function () {
         }
     };
 
-    let addCustomField = function (index) {
-        let inputId = 'edit-contact-custom-' + index;
-        let outerDiv = $('<div>', { id: 'outercustom-' + index, class: 'form-group custom-field-group' });
-        let inputGroup = $('<div>', { class: 'input-group col-xs-10 col-xs-offset-1' });
-        let customInput = $('<input>', { id: inputId, name: inputId, class: 'form-control', type: 'text' });
-        let btnSpan = $('<span>', { class: 'input-group-btn' });
-        let removeButton = $('<button>', { class: 'btn btn-default glyphicon glyphicon-minus' });
+    var addCustomField = function (index) {
+        var inputId = 'edit-contact-custom-' + index;
+        var outerDiv = $('<div>', { id: 'outercustom-' + index, class: 'form-group custom-field-group' });
+        var inputGroup = $('<div>', { class: 'input-group col-xs-10 col-xs-offset-1' });
+        var customInput = $('<input>', { id: inputId, name: inputId, class: 'form-control', type: 'text' });
+        var btnSpan = $('<span>', { class: 'input-group-btn' });
+        var removeButton = $('<button>', { class: 'btn btn-default glyphicon glyphicon-minus' });
 
         removeButton.click(function () {
             removeCustomField(index, outerDiv);
@@ -369,8 +369,8 @@ $(document).ready(function () {
             return false;
         }
 
-        let customFieldElems = $('.custom-field-group');
-        let newIndex = customFieldElems.length + 1;
+        var customFieldElems = $('.custom-field-group');
+        var newIndex = customFieldElems.length + 1;
 
         addCustomField(newIndex);
 
