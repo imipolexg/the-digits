@@ -37,13 +37,16 @@ class SocialAuthController extends Controller
         }
 
         $socialUser = Socialite::driver($provider)->user();
+        \Log::info($provider);
 
         $user = User::where('email', $socialUser->email)->first();
-        if ($user !== null && $user->social_provider !== $provider) {
-            // A user exists with this email via another social provider (or no social provider at all)
-            $conflict = 'auth.social-conflict-' . $user->social_provider;
+        if ($user !== null) {
+            if ($user->social_provider === null || $user->social_provider !== $provider) {
+                // A user exists with this email via another social provider (or no social provider at all)
+                $conflict = 'auth.social-conflict-' . $user->social_provider;
 
-            return redirect('/login')->withInput([ 'email' => $user->email])->withErrors([ 'email' => trans($conflict) ]);
+                return redirect('/login')->withInput([ 'email' => $user->email])->withErrors([ 'email' => trans($conflict) ]);
+           }
         }
 
         $user = $this->createOrUpdateSocialUser($provider, $user, $socialUser);
