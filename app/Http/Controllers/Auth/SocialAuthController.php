@@ -62,7 +62,7 @@ class SocialAuthController extends Controller
             'avatar'          => $socialUser->avatar,
             'expires_in'      => $socialUser->expiresIn,
             'external_id'     => $socialUser->id,
-            'name'            => $socialUser->name,
+            'name'            => $socialUser->name ? $socialUser->name : "No name provided",
             'nickname'        => $socialUser->nickname,
             'refresh_token'   => $socialUser->refreshToken,
             'token'           => $socialUser->token,
