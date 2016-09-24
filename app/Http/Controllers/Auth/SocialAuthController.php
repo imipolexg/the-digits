@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\User;
 use Auth;
 use Illuminate\Http\Request;
+use Laravel\Socialite\Two\InvalidStateException;
 use RandomLib\Factory as RandomFactory;
 use Socialite;
 
@@ -40,7 +41,13 @@ class SocialAuthController extends Controller
             return redirect('/login');
         }
 
-        $socialUser = Socialite::driver($provider)->user();
+        try {
+            $socialUser = Socialite::driver($provider)->user();
+        } catch (InvalidStateException $ex) {
+            // InvalidStateException might be thrown if a user tries to reload
+            // a stale or invalid OAuth2 callback
+            return redirect('/login');
+        }
 
         $user = User::where('email', $socialUser->email)->first();
 
