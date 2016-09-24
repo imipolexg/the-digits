@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\User;
 use Auth;
+use Illuminate\Http\Request;
 use RandomLib\Factory as RandomFactory;
 use Socialite;
 
@@ -28,28 +29,30 @@ class SocialAuthController extends Controller
     /**
      * Handle social auth callback
      *
+     * @param Request The HTTP request
+     * @param $provider The OAuth provider
+     *
      * @return Response
      */
-    public function handleProviderCallback($provider)
+    public function handleProviderCallback(Request $request, $provider)
     {
         if (!$this->isSupportedProvder($provider)) {
             return redirect('/login');
         }
 
         $socialUser = Socialite::driver($provider)->user();
-        \Log::info($provider);
 
         $user = User::where('email', $socialUser->email)->first();
-        if ($user !== null) {
-            if ($user->social_provider === null || $user->social_provider !== $provider) {
-                // A user exists with this email via another social provider (or no social provider at all)
-                $conflict = 'auth.social-conflict-' . $user->social_provider;
 
-                return redirect('/login')->withInput([ 'email' => $user->email])->withErrors([ 'email' => trans($conflict) ]);
-           }
-        }
-
+        // We now allow users to 'connect' their existing accounts with a social
+        // provider. Right now the last used social provider will overwrite the
+        // relevant info, including external_id, avatar url and social_provider.
+        // It would be better to have a table of per-user social providers, but
+        // we don't really need the data for anything important.
         $user = $this->createOrUpdateSocialUser($provider, $user, $socialUser);
+
+        // Regenerate session to prevent session fixation
+        $request->session()->regenerate();
 
         Auth::guard()->login($user);
 
